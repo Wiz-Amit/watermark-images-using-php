@@ -1,15 +1,37 @@
 <?php
-function loadImage($path)
+
+/**
+ * Load Image
+ * @param string $path
+ * @return resource|false
+ */
+function loadImage(string $path)
 {
     return imagecreatefromstring(file_get_contents($path));
 }
 
-function printImage($path)
+/**
+ * Print Image
+ * @param string $path
+ * @return void
+ */
+function printImage(string $path)
 {
     header('Content-type: image/png');
     imagepng(loadImage($path));
 }
 
+/**
+ * Watermark Image
+ * @param string $imagePath path to source JPEG/PNG image
+ * @param string $watermarkPath path to watermark JPEG/PNG image
+ * @param int $coverPercentage percentage of width to be covered by the watermark
+ * @param string $position position of watermark (options: Top, Bottom, Left, Right, Top-Left, Top-Right, etc.)
+ * @param int $paddingPercentage padding percentage for watermark
+ * @param string $outputFilenameoffset output file name (default: watermarkd-SOURCE-FILENAME)
+ * @param bool $preserveTransparency preserve transparency of watermark (default: true)
+ * @return bool
+ */
 function watermarkImage(
     string $imagePath,
     string $watermarkPath,
@@ -58,7 +80,6 @@ function watermarkImage(
     }
 
     // Merge images
-    // imagecopy($i, $w, imagesx($i) / 5, imagesy($i) / 5, 0, 0, imagesx($w), imagesy($w));
     imagecopyresized($i, $w, $x, $y, 0, -1, $destW, $destH, imagesx($w), imagesy($w));
 
     // check output filename
@@ -66,10 +87,6 @@ function watermarkImage(
 
     // output to file
     imagepng($i, $outputFilename);
-
-    // output to screen
-    // header('Content-type: image/png');
-    // imagepng($i);
 
     // clear memory
     imagedestroy($i);
@@ -80,12 +97,12 @@ function watermarkImage(
 
 // :: Tests ::
 
-// Test 1 with all settings
-if (watermarkImage('image-1.jpg', 'logo.png', 20, 'Bottom-Right', 4, 'output.jpg', true)) {
-    printImage('output.jpg');
-}
-
-// Test 2 with minimal settings
-// if (watermarkImage('image-2.jpg', 'logo.png', 80)) {
-//     printImage('watermarked-image-2.jpg');
+// // Test 1 with all settings
+// if (watermarkImage('image-1.jpg', 'logo.png', 20, 'Bottom-Right', 4, 'output.jpg', true)) {
+//     printImage('output.jpg');
 // }
+
+// // Test 2 with minimal settings
+if (watermarkImage('image-2.jpg', 'logo.png')) {
+    printImage('watermarked-image-2.jpg');
+}
